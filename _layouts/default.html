@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% seo %}
+  {% feed_meta %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-logo" href="{{ '/' | relative_url }}">推し活ストーリーズ</a>
+      <nav class="site-nav">
+        <a href="{{ '/' | relative_url }}">ホーム</a>
+        <a href="{{ '/about/' | relative_url }}">このブログについて</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    {{ content }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__links">
+        <a href="https://vilc.storeinfo.jp/" target="_blank" rel="noopener">運営: VILC</a>
+        <span aria-hidden="true">/</span>
+        <a href="https://vilc.storeinfo.jp/" target="_blank" rel="noopener">オンラインショップ</a>
+        <span aria-hidden="true">/</span>
+        <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+      </p>
+      <p class="site-footer__copy">&copy; {{ site.time | date: "%Y" }} 推し活ストーリーズ — 当ブログの物語はすべてフィクションです</p>
+    </div>
+  </footer>
+</body>
+</html>

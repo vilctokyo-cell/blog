@@ -1,0 +1,33 @@
+title: 推し活ストーリーズ
+description: ライブ参戦・推し活をテーマにした、毎日更新のフィクション体験談ブログ。缶バッジ、痛バッグ、参戦服……オタクたちの熱くて笑えてちょっと泣ける物語。
+lang: ja
+# 独自ドメイン接続後に url を更新すること (例: https://blog.example.jp)
+url: ""
+baseurl: ""
+timezone: Asia/Tokyo
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: true
+
+paginate: 10
+paginate_path: "/page/:num/"
+permalink: /stories/:slug/
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-paginate
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+
+exclude:
+  - scripts/
+  - README.md

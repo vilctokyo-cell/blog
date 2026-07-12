@@ -1,0 +1,36 @@
+---
+layout: default
+---
+<div class="hero">
+  <h1 class="hero__title">推し活ストーリーズ</h1>
+  <p class="hero__sub">ライブ参戦・推し活のフィクション体験談を毎日お届け</p>
+</div>
+
+<div class="card-grid">
+  {% for post in paginator.posts %}
+  <article class="card">
+    <a class="card__link" href="{{ post.url | relative_url }}">
+      {% if post.image %}
+      <div class="card__thumb" style="background-image:url('{{ post.image | relative_url }}')"></div>
+      {% endif %}
+      <div class="card__body">
+        <time class="card__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+        <h2 class="card__title">{{ post.title }}</h2>
+        <p class="card__excerpt">{{ post.description | default: post.excerpt | strip_html | truncate: 80 }}</p>
+      </div>
+    </a>
+  </article>
+  {% endfor %}
+</div>
+
+{% if paginator.total_pages > 1 %}
+<nav class="pagination">
+  {% if paginator.previous_page %}
+  <a href="{{ paginator.previous_page_path | relative_url }}" class="pagination__btn">&laquo; 新しい記事</a>
+  {% endif %}
+  <span class="pagination__info">{{ paginator.page }} / {{ paginator.total_pages }}</span>
+  {% if paginator.next_page %}
+  <a href="{{ paginator.next_page_path | relative_url }}" class="pagination__btn">古い記事 &raquo;</a>
+  {% endif %}
+</nav>
+{% endif %}

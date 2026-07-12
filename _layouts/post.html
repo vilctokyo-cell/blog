@@ -1,0 +1,32 @@
+---
+layout: default
+---
+<article class="post">
+  <header class="post__header">
+    <time class="post__date" datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time>
+    <h1 class="post__title">{{ page.title }}</h1>
+  </header>
+
+  {% if page.image %}
+  <figure class="post__hero">
+    <img src="{{ page.image | relative_url }}" alt="{{ page.title }} の挿絵" loading="lazy">
+  </figure>
+  {% endif %}
+
+  <div class="post__content">
+    {{ content }}
+  </div>
+
+  <p class="post__disclaimer">※この物語はフィクションです。実在の人物・団体とは一切関係ありません。</p>
+
+  <nav class="post-nav">
+    {% if page.next %}
+    <a class="post-nav__item post-nav__item--prev" href="{{ page.next.url | relative_url }}">&laquo; {{ page.next.title | truncate: 20 }}</a>
+    {% endif %}
+    {% if page.previous %}
+    <a class="post-nav__item post-nav__item--next" href="{{ page.previous.url | relative_url }}">{{ page.previous.title | truncate: 20 }} &raquo;</a>
+    {% endif %}
+  </nav>
+
+  <p class="post__back"><a href="{{ '/' | relative_url }}">&larr; 記事一覧にもどる</a></p>
+</article>
