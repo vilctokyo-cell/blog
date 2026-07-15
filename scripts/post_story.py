@@ -3,14 +3,18 @@
 使い方:
     python3 scripts/post_story.py ["テーマ・方向性"] [--no-push]
 
-- ストーリー: Gemini (generate_story.py)
+- ストーリー: Gemini (generate_story.py)。全5話の連載として、実行のたびに1話ずつ進む。
 - 挿絵: Pollinations.ai (アニメ風オリジナルキャラ、露出なし、毎回ランダムな見た目)
 - 記事: _posts/YYYY-MM-DD-slug.md に保存、画像は assets/images/posts/ に保存
+- 連載の進行状況は data/series_state.json に保存し、5話目で完結すると自動的にリセットされる
 - 最後に git add/commit/push (リモート未設定や失敗時はエラー報告)
 """
+from __future__ import annotations
+
 import argparse
 import datetime
 import io
+import json
 import os
 import random
 import re
@@ -24,6 +28,7 @@ from PIL import Image
 from generate_story import generate_story
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+STATE_PATH = os.path.join(REPO_ROOT, "data", "series_state.json")
 
 IMAGE_BASE = (
     "anime style illustration, cute girl character, full body standing pose, "
@@ -97,6 +102,24 @@ def generate_image(prompt: str, out_path: str, retries: int = 3) -> str:
     raise last_error
 
 
+def load_state() -> dict | None:
+    if not os.path.exists(STATE_PATH):
+        return None
+    with open(STATE_PATH) as f:
+        return json.load(f)
+
+
+def save_state(state: dict) -> None:
+    os.makedirs(os.path.dirname(STATE_PATH), exist_ok=True)
+    with open(STATE_PATH, "w") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2)
+
+
+def clear_state() -> None:
+    if os.path.exists(STATE_PATH):
+        os.remove(STATE_PATH)
+
+
 def safe_slug(slug: str) -> str:
     slug = re.sub(r"[^a-z0-9-]", "-", slug.lower()).strip("-")
     slug = re.sub(r"-{2,}", "-", slug)
@@ -111,10 +134,22 @@ def body_to_markdown(body: str) -> str:
 def run(theme: str, push: bool):
     now = datetime.datetime.now()
 
+    state = load_state()
+
     print("1/3 ストーリー生成中...", file=sys.stderr)
-    story = generate_story(theme)
-    slug = safe_slug(story["slug"])
-    print(f"  タイトル: {story['title']} (slug: {slug})", file=sys.stderr)
+    story = generate_story(theme, state=state)
+    episode = story["episode"]
+    is_final = story["is_final"]
+
+    if state is None:
+        series_slug = safe_slug(story["slug"])
+    else:
+        series_slug = state["series_slug"]
+    slug = f"{series_slug}-ep{episode}"
+
+    title_prefix = f"【全{story['total_episodes']}話・完結】" if is_final else f"【全{story['total_episodes']}話・第{episode}話】"
+    title = f"{title_prefix}{story['title']}"
+    print(f"  タイトル: {title} (slug: {slug})", file=sys.stderr)
 
     print("2/3 挿絵生成中...", file=sys.stderr)
     image_rel = f"assets/images/posts/{now:%Y-%m-%d}-{slug}.jpg"
@@ -124,7 +159,7 @@ def run(theme: str, push: bool):
     description = re.sub(r"\s+", " ", story["body"]).strip()[:90]
     front_matter = "\n".join([
         "---",
-        f'title: "{story["title"].replace(chr(34), chr(39))}"',
+        f'title: "{title.replace(chr(34), chr(39))}"',
         f"date: {now:%Y-%m-%d %H:%M:%S} +0900",
         f"slug: {slug}",
         f"image: /{image_rel}",
@@ -136,10 +171,23 @@ def run(theme: str, push: bool):
     with open(os.path.join(REPO_ROOT, post_rel), "w") as f:
         f.write(front_matter + body_to_markdown(story["body"]) + "\n")
 
+    if is_final:
+        clear_state()
+    else:
+        save_state({
+            "series_slug": series_slug,
+            "protagonist_name": story["protagonist_name"],
+            "band_name": story["band_name"],
+            "pattern_name": story["pattern_name"],
+            "pattern_desc": story["pattern_desc"],
+            "episode": episode + 1,
+            "summary_so_far": story["episode_summary"],
+        })
+
     if push:
         subprocess.run(["git", "add", "-A"], cwd=REPO_ROOT, check=True)
         subprocess.run(
-            ["git", "commit", "-m", f"post: {story['title']}"],
+            ["git", "commit", "-m", f"post: {title}"],
             cwd=REPO_ROOT, check=True,
         )
         result = subprocess.run(
@@ -150,7 +198,7 @@ def run(theme: str, push: bool):
         print(f"完了 (公開): /stories/{slug}/")
     else:
         print(f"完了 (ローカル保存のみ): {post_rel}")
-    print(f"タイトル: {story['title']}")
+    print(f"タイトル: {title}")
 
 
 if __name__ == "__main__":
