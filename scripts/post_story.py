@@ -26,6 +26,7 @@ import requests
 from PIL import Image
 
 from generate_story import generate_story
+from pixai_image import generate_image as pixai_generate_image
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 STATE_PATH = os.path.join(REPO_ROOT, "data", "series_state.json")
@@ -77,7 +78,21 @@ def build_image_prompt() -> str:
 
 
 def generate_image(prompt: str, out_path: str, retries: int = 3) -> str:
-    """Pollinationsで生成し、768px幅のJPEGに圧縮して保存する。"""
+    """PIXAI_API_KEYが設定されていればPixAI(Tsubaki.2、アナトミー精度が高い)を優先使用。
+    未設定、またはPixAIが失敗した場合はPollinationsにフォールバックする。
+    どちらの経路でも最終的に768px幅のJPEGに圧縮して保存する。"""
+    if os.environ.get("PIXAI_API_KEY"):
+        try:
+            raw_path = out_path + ".pixai_raw.png"
+            pixai_generate_image(prompt, raw_path)
+            img = Image.open(raw_path).convert("RGB")
+            img.thumbnail((768, 768))
+            img.save(out_path, "JPEG", quality=82, optimize=True)
+            os.remove(raw_path)
+            return out_path
+        except Exception:
+            pass  # PixAI失敗時はPollinationsにフォールバック
+
     encoded = urllib.parse.quote(prompt)
     url = f"https://image.pollinations.ai/prompt/{encoded}"
     last_error = None
