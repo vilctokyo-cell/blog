@@ -32,12 +32,15 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 STATE_PATH = os.path.join(REPO_ROOT, "data", "series_state.json")
 
 IMAGE_BASE = (
-    "anime style illustration, cute girl character, full body standing pose, "
+    "anime style illustration, cute girl character, upper body portrait, waist-up shot, "
     "moe aesthetic, clean sharp line art, vivid colors, big sparkling expressive eyes, "
     "soft cel shading, Japanese anime art style, high quality detailed illustration, "
-    "full body visible head to feet, precise clean hand anatomy, exactly two arms and two hands"
+    "close framing on face and upper torso, precise clean hand anatomy, exactly two arms and two hands"
 )
-IMAGE_MODESTY_NOTE = "one-piece garment silhouette, single continuous outfit from chest to knees"
+IMAGE_MODESTY_NOTE = (
+    "one-piece garment silhouette, single continuous outfit from chest to knees, "
+    "high neckline fully covering shoulders and collarbone, no off-shoulder or strapless design"
+)
 HAIR_COLORS = ["black", "silver", "pastel pink", "light blue", "honey blonde", "lavender purple", "chestnut brown"]
 HAIRSTYLES = ["long straight hair", "twin tails", "high ponytail", "short bob cut", "wavy shoulder-length hair", "hair in a high bun with ribbon"]
 OUTFITS = [
@@ -49,12 +52,12 @@ OUTFITS = [
     "sailor-style knee-length dress with a wide collar and knee-high socks",
 ]
 POSES = [
-    "holding a glow stick high, dynamic stage lighting with spotlights, energetic rock performance pose",
-    "peace sign pose with a bright cheerful smile",
-    "jumping mid-air with arms raised in excitement",
-    "waving both penlights side to side, joyful expression",
-    "striking a confident idol pose with sparkles in the background",
-    "gentle twirl with skirt flowing, cheerful wink",
+    "holding a glow stick up near the face, dynamic stage lighting with spotlights, joyful expression",
+    "peace sign pose held near the face with a bright cheerful smile",
+    "one hand resting on hip, confident smile, sparkles in the background",
+    "both hands cupped near the mouth cheering, excited expression",
+    "chin resting gently on one hand, dreamy smile",
+    "small wave with one hand near the face, cheerful wink",
 ]
 BACKGROUNDS = [
     "concert stage with colorful spotlights",
