@@ -32,32 +32,31 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 STATE_PATH = os.path.join(REPO_ROOT, "data", "series_state.json")
 
 IMAGE_BASE = (
-    "anime style illustration, cute girl character, upper body portrait, waist-up shot, "
+    "anime style illustration, cute girl character, bust-up portrait, close-up shot of head and shoulders only, "
     "moe aesthetic, clean sharp line art, vivid colors, big sparkling expressive eyes, "
     "soft cel shading, Japanese anime art style, high quality detailed illustration, "
-    "close framing on face and upper torso, precise clean hand anatomy, exactly two arms and two hands"
+    "framing cropped just below the shoulders, hands and arms not visible in frame, no hands shown"
 )
 IMAGE_MODESTY_NOTE = (
-    "one-piece garment silhouette, single continuous outfit from chest to knees, "
-    "high neckline fully covering shoulders and collarbone, no off-shoulder or strapless design"
+    "single unified one-piece garment with a fully closed hem, "
+    "stomach and waist completely covered by fabric with no visible skin between chest and thighs, "
+    "high crew neckline covering shoulders and collarbone completely, hem reaching the knees"
 )
 HAIR_COLORS = ["black", "silver", "pastel pink", "light blue", "honey blonde", "lavender purple", "chestnut brown"]
 HAIRSTYLES = ["long straight hair", "twin tails", "high ponytail", "short bob cut", "wavy shoulder-length hair", "hair in a high bun with ribbon"]
 OUTFITS = [
     "long band t-shirt dress reaching mid-thigh with a wide belt, paired with leggings",
-    "oversized hoodie dress reaching the knees with band merch print, paired with leggings",
-    "flowy knee-length sundress decorated with enamel pin badges and ribbons",
+    "long tunic-length dress with band merch print, closed hem falling well past the hips, paired with leggings",
     "long-sleeve turtleneck knee-length dress",
-    "denim pinafore dress over a long-sleeve top, knee-length skirt section",
     "sailor-style knee-length dress with a wide collar and knee-high socks",
 ]
 POSES = [
-    "holding a glow stick up near the face, dynamic stage lighting with spotlights, joyful expression",
-    "peace sign pose held near the face with a bright cheerful smile",
-    "one hand resting on hip, confident smile, sparkles in the background",
-    "both hands cupped near the mouth cheering, excited expression",
-    "chin resting gently on one hand, dreamy smile",
-    "small wave with one hand near the face, cheerful wink",
+    "bright cheerful smile looking straight at the camera, dynamic stage lighting with spotlights",
+    "playful wink with head tilted slightly, joyful expression",
+    "surprised expression with mouth open, sparkling eyes",
+    "gentle closed-eye smile, peaceful expression",
+    "laughing joyfully with eyes closed, head tilted back slightly",
+    "shy smile looking sideways, soft blush",
 ]
 BACKGROUNDS = [
     "concert stage with colorful spotlights",
