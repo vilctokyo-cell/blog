@@ -96,6 +96,7 @@ def generate_story(theme: str = "", state: dict | None = None, retries: int = 4)
                     "thinkingConfig": {"thinkingBudget": 512},
                 },
             },
+            timeout=90,
         )
         if resp.status_code >= 300:
             last_error = RuntimeError(f"生成失敗 ({resp.status_code}): {resp.text}")
