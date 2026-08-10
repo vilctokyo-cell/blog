@@ -27,20 +27,25 @@ from PIL import Image
 
 from generate_story import generate_story
 from pixai_image import generate_image as pixai_generate_image
+from draw_things_image import generate_image as draw_things_generate_image
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 STATE_PATH = os.path.join(REPO_ROOT, "data", "series_state.json")
 
 IMAGE_BASE = (
-    "anime style illustration, cute girl character, bust-up portrait, close-up shot of head and shoulders only, "
+    "anime style illustration, cute girl character, upper body portrait shot, chest-up composition, "
     "moe aesthetic, clean sharp line art, vivid colors, big sparkling expressive eyes, "
     "soft cel shading, Japanese anime art style, high quality detailed illustration, "
-    "framing cropped just below the shoulders, hands and arms not visible in frame, no hands shown"
+    "generous headroom with margin above the head, entire face and both eyes clearly visible, "
+    "top of head fully in frame, not zoomed in, not an extreme close-up, "
+    "hands and arms not visible in frame, no hands shown"
 )
 IMAGE_MODESTY_NOTE = (
+    "(high crew neckline, turtleneck-style collar:1.3), (shoulders fully covered by fabric:1.3), "
+    "(sleeves covering the shoulders and upper arms:1.3), never sleeveless, never strapless, never off-shoulder, "
     "single unified one-piece garment with a fully closed hem, "
     "stomach and waist completely covered by fabric with no visible skin between chest and thighs, "
-    "high crew neckline covering shoulders and collarbone completely, hem reaching the knees"
+    "no visible collarbone, no visible cleavage, hem reaching the knees"
 )
 HAIR_COLORS = ["black", "silver", "pastel pink", "light blue", "honey blonde", "lavender purple", "chestnut brown"]
 HAIRSTYLES = ["long straight hair", "twin tails", "high ponytail", "short bob cut", "wavy shoulder-length hair", "hair in a high bun with ribbon"]
@@ -70,19 +75,31 @@ BACKGROUNDS = [
 def build_image_prompt() -> str:
     parts = [
         IMAGE_BASE,
+        IMAGE_MODESTY_NOTE,
         f"{random.choice(HAIR_COLORS)} {random.choice(HAIRSTYLES)}",
         random.choice(OUTFITS),
         random.choice(POSES),
         random.choice(BACKGROUNDS),
-        IMAGE_MODESTY_NOTE,
     ]
     return ", ".join(parts)
 
 
 def generate_image(prompt: str, out_path: str, retries: int = 3) -> str:
-    """PIXAI_API_KEYが設定されていればPixAI(Tsubaki.2、アナトミー精度が高い)を優先使用。
-    未設定、またはPixAIが失敗した場合はPollinationsにフォールバックする。
-    どちらの経路でも最終的に768px幅のJPEGに圧縮して保存する。"""
+    """ローカルのDraw Things(Anime Anything v3)を優先使用する。Pollinationsはアニメ塗りから
+    半端にリアルな3D調へ style drift しやすく(不気味の谷)、服装指示も守られないことがあったため。
+    Draw Things.appが起動していない/APIサーバーがOFFの場合はPixAI、それも無ければPollinationsに
+    フォールバックする。どの経路でも最終的に768px幅のJPEGに圧縮して保存する。"""
+    try:
+        raw_path = out_path + ".dt_raw.png"
+        draw_things_generate_image(prompt, raw_path)
+        img = Image.open(raw_path).convert("RGB")
+        img.thumbnail((768, 768))
+        img.save(out_path, "JPEG", quality=82, optimize=True)
+        os.remove(raw_path)
+        return out_path
+    except Exception:
+        pass  # Draw Things未起動・失敗時はPixAI/Pollinationsにフォールバック
+
     if os.environ.get("PIXAI_API_KEY"):
         try:
             raw_path = out_path + ".pixai_raw.png"
