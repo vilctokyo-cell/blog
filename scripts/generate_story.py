@@ -84,20 +84,24 @@ def generate_story(theme: str = "", state: dict | None = None, retries: int = 4)
 
     last_error = None
     for _ in range(retries):
-        resp = requests.post(
-            API_URL,
-            headers={"x-goog-api-key": api_key, "Content-Type": "application/json"},
-            json={
-                "contents": [{"parts": [{"text": user_prompt}]}],
-                "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
-                "generationConfig": {
-                    "responseMimeType": "application/json",
-                    "maxOutputTokens": 4096,
-                    "thinkingConfig": {"thinkingBudget": 512},
+        try:
+            resp = requests.post(
+                API_URL,
+                headers={"x-goog-api-key": api_key, "Content-Type": "application/json"},
+                json={
+                    "contents": [{"parts": [{"text": user_prompt}]}],
+                    "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+                    "generationConfig": {
+                        "responseMimeType": "application/json",
+                        "maxOutputTokens": 4096,
+                        "thinkingConfig": {"thinkingBudget": 512},
+                    },
                 },
-            },
-            timeout=90,
-        )
+                timeout=90,
+            )
+        except requests.exceptions.RequestException as e:
+            last_error = e
+            continue
         if resp.status_code >= 300:
             last_error = RuntimeError(f"生成失敗 ({resp.status_code}): {resp.text}")
             continue
