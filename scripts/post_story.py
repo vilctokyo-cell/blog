@@ -33,19 +33,12 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 STATE_PATH = os.path.join(REPO_ROOT, "data", "series_state.json")
 
 IMAGE_BASE = (
-    "anime style illustration, cute girl character, upper body portrait shot, chest-up composition, "
-    "moe aesthetic, clean sharp line art, vivid colors, big sparkling expressive eyes, "
-    "soft cel shading, Japanese anime art style, high quality detailed illustration, "
-    "generous headroom with margin above the head, entire face and both eyes clearly visible, "
-    "top of head fully in frame, not zoomed in, not an extreme close-up, "
-    "hands and arms not visible in frame, no hands shown"
+    "anime illustration, 1girl, (head-and-shoulders portrait:1.3), (top of head fully visible:1.2), "
+    "(full face and both eyes visible:1.3), (not a close-up:1.3), small bust, (hands not in frame:1.2)"
 )
 IMAGE_MODESTY_NOTE = (
-    "(high crew neckline, turtleneck-style collar:1.3), (shoulders fully covered by fabric:1.3), "
-    "(sleeves covering the shoulders and upper arms:1.3), never sleeveless, never strapless, never off-shoulder, "
-    "single unified one-piece garment with a fully closed hem, "
-    "stomach and waist completely covered by fabric with no visible skin between chest and thighs, "
-    "no visible collarbone, no visible cleavage, hem reaching the knees"
+    "(turtleneck collar:1.3), (shoulders fully covered by fabric:1.3), (sleeves covering arms:1.3), "
+    "no bare shoulders, no cleavage, no cutout neckline, no halter"
 )
 HAIR_COLORS = ["black", "silver", "pastel pink", "light blue", "honey blonde", "lavender purple", "chestnut brown"]
 HAIRSTYLES = ["long straight hair", "twin tails", "high ponytail", "short bob cut", "wavy shoulder-length hair", "hair in a high bun with ribbon"]
@@ -91,7 +84,11 @@ def generate_image(prompt: str, out_path: str, retries: int = 3) -> str:
     フォールバックする。どの経路でも最終的に768px幅のJPEGに圧縮して保存する。"""
     try:
         raw_path = out_path + ".dt_raw.png"
-        draw_things_generate_image(prompt, raw_path)
+        draw_things_generate_image(
+            prompt, raw_path,
+            width=768, height=768,
+            hires_fix_width=512, hires_fix_height=512,
+        )
         img = Image.open(raw_path).convert("RGB")
         img.thumbnail((768, 768))
         img.save(out_path, "JPEG", quality=82, optimize=True)

@@ -25,10 +25,12 @@ NEGATIVE_PROMPT_DEFAULT = (
     "cropped, worst quality, low quality, normal quality, blurry, jpeg artifacts, "
     "signature, watermark, username, text, kanji, japanese text, gibberish text, writing, "
     "3d render, cgi, semi-realistic, photorealistic, uncanny, deformed, extra limbs, "
-    "(bare shoulders:1.3), (off-shoulder:1.3), off shoulder, strapless, tube top, bandeau, halter top, "
-    "sleeveless, (visible cleavage:1.3), (visible collarbone:1.2), bare arms, tank top, camisole, "
+    "(bare shoulders:1.3), (off-shoulder:1.3), off shoulder, strapless, tube top, bandeau, (halter top:1.3), "
+    "(cutout neckline:1.3), keyhole neckline, (sleeveless:1.3), (visible cleavage:1.3), (visible collarbone:1.2), "
+    "bare arms, tank top, camisole, hands, fingers, hands in frame, "
     "(extreme close-up:1.4), (cropped face:1.4), (cropped forehead:1.4), (cropped head:1.4), "
     "cut off head, one eye visible, close-up of neck, close-up of chest, close-up of collarbone, exposed skin, "
+    "(huge breasts:1.3), (large breasts:1.3), (oversized bust:1.3), gigantic breasts, exaggerated bust, "
     "reference sheet, character sheet, multiple views, turnaround, multiple angles, split screen, collage"
 )
 
@@ -78,8 +80,7 @@ def generate_image(
     resp = requests.post(
         f"{BASE_URL}/sdapi/v1/txt2img",
         json={
-            "prompt": "masterpiece, best quality, extremely detailed, intricate line art, "
-            "professional anime illustration, flat cel shading, 2D anime style, sharp focus, " + prompt,
+            "prompt": "masterpiece, best quality, anime style, cel shading, " + prompt,
             "negative_prompt": negative_prompt,
             "width": width,
             "height": height,
